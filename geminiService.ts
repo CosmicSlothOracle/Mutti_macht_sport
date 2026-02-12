@@ -59,7 +59,6 @@ export const fetchBundesligaResults = async (matchdayRange: string = "aktuell"):
     model: 'gemini-2.0-flash',
     contents: prompt,
     config: {
-      tools: [{ googleSearch: {} }],
       responseMimeType: "application/json",
       responseSchema
     }
