@@ -4,7 +4,7 @@ Ein Portal für die Ergebnisse der 1. Fußball-Bundesliga. Spieltage anzeigen, T
 
 ## Datenquelle
 
-Daten werden von der kostenlosen [OpenLigaDB](https://www.openligadb.de/) API geladen – keine API-Keys erforderlich.
+Daten werden von der kostenlosen [OpenLigaDB API](https://www.openligadb.de/) geladen – keine API-Keys erforderlich.
 
 ## Lokal starten
 
@@ -15,10 +15,9 @@ npm install
 npm run dev
 ```
 
-## Build & Deploy
+## Deployment
 
-```bash
-npm run build
-```
+Dieses Projekt kann einfach auf Netlify deployt werden. Stellen Sie sicher, dass Ihre Build-Einstellungen wie folgt konfiguriert sind:
 
-Deployment auf GitHub Pages erfolgt automatisch bei Push auf `main`.
+- **Build command:** `npm run build`
+- **Publish directory:** `dist`
