@@ -1,4 +1,17 @@
 
+export interface LeagueTableEntry {
+  teamName: string;
+  matches: number;
+  wins: number;
+  draws: number;
+  losses: number;
+  goals: number;
+  opponentGoals: number;
+  goalDifference: number;
+  points: number;
+  iconUrl: string;
+}
+
 export interface Match {
   id: string;
   date: string;

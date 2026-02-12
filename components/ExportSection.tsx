@@ -33,13 +33,13 @@ const ExportSection: React.FC<ExportSectionProps> = ({ data }) => {
       doc.setFontSize(14);
       doc.text(`${md.matchday}. Spieltag`, 14, startY);
       
-      const tableRows = md.matches.map(m => [
-        new Date(m.date).toLocaleDateString('de-DE'),
-        m.homeTeam,
-        `${m.homeScore} : ${m.awayScore}`,
-        m.awayTeam,
-        (m.goals || []).map(g => `${g.player} (${g.minute}')`).join(', ')
-      ]);
+        const tableRows = md.matches.map(m => [
+          String(new Date(m.date).toLocaleDateString('de-DE')),
+          String(m.homeTeam),
+          String(`${m.homeScore} : ${m.awayScore}`),
+          String(m.awayTeam),
+          String((m.goals || []).map(g => `${g.player} (${g.minute}')`).join(', '))
+        ]);
 
       doc.autoTable({
         startY: startY + 5,
@@ -61,27 +61,72 @@ const ExportSection: React.FC<ExportSectionProps> = ({ data }) => {
     doc.save(`Bundesliga_Spieltage_${selectedMatchdays.sort((a,b)=>a-b).join('_')}.pdf`);
   };
 
+  const handleExportCsv = () => {
+    if (selectedMatchdays.length === 0) return;
+
+    let csvContent = "data:text/csv;charset=utf-8,";
+    csvContent += ["Spieltag", "Datum", "Heim", "Ergebnis", "Gast", "Tore"].join(';') + "\n";
+
+    data.filter(d => selectedMatchdays.includes(d.matchday)).forEach(md => {
+      md.matches.forEach(m => {
+        const row = [
+          md.matchday,
+          new Date(m.date).toLocaleDateString('de-DE'),
+          `"${m.homeTeam}"`,
+          `${m.homeScore}:${m.awayScore}`,
+          `"${m.awayTeam}"`,
+          `"${(m.goals || []).map(g => `${g.player} (${g.minute}')`).join(', ')}"`
+        ];
+        csvContent += row.join(';') + "\n";
+      });
+    });
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `Bundesliga_Spieltage_${selectedMatchdays.sort((a,b)=>a-b).join('_')}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="bg-white p-6 rounded-2xl shadow-xl border border-slate-200 mt-8 mb-12">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div>
           <h2 className="text-xl font-bold text-slate-900">Daten Exportieren</h2>
-          <p className="text-sm text-slate-500">Wählen Sie die Spieltage aus, die Sie als PDF-Bericht speichern möchten.</p>
+          <p className="text-sm text-slate-500">Wählen Sie die Spieltage aus, die Sie als PDF-Bericht speichern möchten, oder exportieren Sie als CSV.</p>
         </div>
-        <button 
-          onClick={handleExport}
-          disabled={selectedMatchdays.length === 0}
-          className={`px-6 py-3 rounded-xl font-bold transition-all shadow-lg flex items-center justify-center gap-2 ${
-            selectedMatchdays.length > 0 
-            ? 'bg-blue-600 text-white hover:bg-blue-700 transform hover:-translate-y-0.5 active:translate-y-0' 
-            : 'bg-slate-100 text-slate-400 cursor-not-allowed'
-          }`}
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-          PDF Bericht Exportieren ({selectedMatchdays.length})
-        </button>
+        <div className="flex gap-3">
+          <button 
+            onClick={handleExport}
+            disabled={selectedMatchdays.length === 0}
+            className={`px-6 py-3 rounded-xl font-bold transition-all shadow-lg flex items-center justify-center gap-2 ${
+              selectedMatchdays.length > 0 
+              ? 'bg-blue-600 text-white hover:bg-blue-700 transform hover:-translate-y-0.5 active:translate-y-0' 
+              : 'bg-slate-100 text-slate-400 cursor-not-allowed'
+            }`}
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 0 01-2 2z" />
+            </svg>
+            PDF Bericht ({selectedMatchdays.length})
+          </button>
+          <button 
+            onClick={handleExportCsv}
+            disabled={selectedMatchdays.length === 0}
+            className={`px-6 py-3 rounded-xl font-bold transition-all shadow-lg flex items-center justify-center gap-2 ${
+              selectedMatchdays.length > 0 
+              ? 'bg-green-600 text-white hover:bg-green-700 transform hover:-translate-y-0.5 active:translate-y-0' 
+              : 'bg-slate-100 text-slate-400 cursor-not-allowed'
+            }`}
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            CSV Export ({selectedMatchdays.length})
+          </button>
+        </div>
       </div>
 
       <div className="flex flex-wrap gap-2">

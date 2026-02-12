@@ -4,11 +4,16 @@ import { fetchBundesligaResults } from './apiService';
 import { MatchdayData, LoadingStatus } from './types';
 import MatchCard from './components/MatchCard';
 import ExportSection from './components/ExportSection';
+import TableSection from './components/TableSection';
+import StatisticsSection from './components/StatisticsSection';
+
+type ActiveSection = 'results' | 'table' | 'statistics';
 
 const App: React.FC = () => {
   const [data, setData] = useState<MatchdayData[]>([]);
   const [status, setStatus] = useState<LoadingStatus>(LoadingStatus.IDLE);
   const [activeMatchday, setActiveMatchday] = useState<number>(1);
+  const [activeSection, setActiveSection] = useState<ActiveSection>('results');
 
   const loadData = useCallback(async () => {
     setStatus(LoadingStatus.LOADING);
@@ -55,9 +60,21 @@ const App: React.FC = () => {
             </div>
             
             <nav className="hidden md:flex gap-8 items-center">
-              <a href="#" className="text-sm font-bold uppercase hover:text-red-500 transition-colors">Ergebnisse</a>
-              <a href="#" className="text-sm font-bold uppercase text-slate-400 cursor-not-allowed">Tabelle</a>
-              <a href="#" className="text-sm font-bold uppercase text-slate-400 cursor-not-allowed">Statistiken</a>
+              <a 
+                href="#"
+                onClick={() => setActiveSection('results')}
+                className={`text-sm font-bold uppercase transition-colors ${activeSection === 'results' ? 'text-red-500' : 'hover:text-red-500 text-white'}`}
+              >Ergebnisse</a>
+              <a 
+                href="#"
+                onClick={() => setActiveSection('table')}
+                className={`text-sm font-bold uppercase transition-colors ${activeSection === 'table' ? 'text-red-500' : 'hover:text-red-500 text-white'}`}
+              >Tabelle</a>
+              <a 
+                href="#"
+                onClick={() => setActiveSection('statistics')}
+                className={`text-sm font-bold uppercase transition-colors ${activeSection === 'statistics' ? 'text-red-500' : 'hover:text-red-500 text-white'}`}
+              >Statistiken</a>
             </nav>
             
             <button 
@@ -99,7 +116,7 @@ const App: React.FC = () => {
           </div>
         )}
 
-        {status === LoadingStatus.SUCCESS && (
+        {status === LoadingStatus.SUCCESS && activeSection === 'results' && (
           <>
             {/* Matchday Selector */}
             <div className="mb-10">
@@ -135,6 +152,14 @@ const App: React.FC = () => {
             {/* Export Section */}
             <ExportSection data={data} />
           </>
+        )}
+
+        {status === LoadingStatus.SUCCESS && activeSection === 'table' && (
+          <TableSection />
+        )}
+
+        {status === LoadingStatus.SUCCESS && activeSection === 'statistics' && (
+          <StatisticsSection allMatchData={data} />
         )}
       </main>
 

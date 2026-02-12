@@ -81,3 +81,22 @@ export const fetchBundesligaResults = async (): Promise<MatchdayData[]> => {
 
   return results.sort((a, b) => a.matchday - b.matchday);
 };
+
+export const fetchLeagueTable = async (): Promise<LeagueTableEntry[]> => {
+  const tableRes = await fetch(`${OPENLIGADB_BASE}/getbltable/bl1/2024`);
+  if (!tableRes.ok) throw new Error('Konnte Liga-Tabelle nicht laden.');
+  const rawTable: any[] = await tableRes.json();
+
+  return rawTable.map(entry => ({
+    teamName: entry.teamName,
+    matches: entry.matches,
+    wins: entry.won,
+    draws: entry.draw,
+    losses: entry.lost,
+    goals: entry.goals,
+    opponentGoals: entry.opponentGoals,
+    goalDifference: entry.goalDiff,
+    points: entry.points,
+    iconUrl: entry.teamIconUrl,
+  }));
+};
