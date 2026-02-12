@@ -1,0 +1,6 @@
+
+{
+  "name": "Bundesliga Live-Ergebnisse",
+  "description": "Ein modernes Portal für die Ergebnisse der 1. Fußball-Bundesliga. Sehen Sie Spieltage ein, analysieren Sie Tore und exportieren Sie Statistiken als PDF.",
+  "requestFramePermissions": []
+}

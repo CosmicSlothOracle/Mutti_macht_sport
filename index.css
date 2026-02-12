@@ -1,0 +1,15 @@
+/* Custom styles for Bundesliga Live-Ergebnisse */
+
+/* Hide scrollbar for matchday selector */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Smooth transitions */
+* {
+  scroll-behavior: smooth;
+}
