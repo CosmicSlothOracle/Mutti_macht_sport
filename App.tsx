@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { fetchBundesligaResults } from './geminiService';
+import { fetchBundesligaResults } from './apiService';
 import { MatchdayData, LoadingStatus } from './types';
 import MatchCard from './components/MatchCard';
 import ExportSection from './components/ExportSection';
@@ -14,7 +14,7 @@ const App: React.FC = () => {
     setStatus(LoadingStatus.LOADING);
     try {
       // We fetch "alle bisherigen" matchdays to populate the UI
-      const results = await fetchBundesligaResults("alle gespielten Spieltage der Saison 24/25");
+      const results = await fetchBundesligaResults();
       if (results && results.length > 0) {
         // Sort by matchday descending
         const sorted = results.sort((a, b) => b.matchday - a.matchday);
@@ -142,7 +142,7 @@ const App: React.FC = () => {
       <footer className="bg-white border-t border-slate-200 py-12">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <p className="text-slate-400 text-sm font-medium">© 2025 Bundesliga Live-Ergebnisse Portal. Alle Rechte vorbehalten.</p>
-          <p className="text-slate-300 text-xs mt-2">Präsentiert mit Gemini AI Technologie</p>
+          <p className="text-slate-300 text-xs mt-2">Daten von OpenLigaDB</p>
         </div>
       </footer>
     </div>
